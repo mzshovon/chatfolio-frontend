@@ -14,6 +14,7 @@ interface MessageListProps {
   isSending: boolean;
   suggestions: string[];
   onPickSuggestion: (text: string) => void;
+  onOpenSection: (sectionId: string) => void;
   inputDisabled: boolean;
 }
 
@@ -23,6 +24,7 @@ export function MessageList({
   isSending,
   suggestions,
   onPickSuggestion,
+  onOpenSection,
   inputDisabled,
 }: MessageListProps) {
   const listRef = useRef<HTMLDivElement>(null);
@@ -44,7 +46,12 @@ export function MessageList({
       )}
 
       {messages.map((message) => (
-        <MessageBubble key={message.id} message={message} assistantName={assistantName} />
+        <MessageBubble
+          key={message.id}
+          message={message}
+          assistantName={assistantName}
+          onOpenSection={onOpenSection}
+        />
       ))}
 
       {isSending && (

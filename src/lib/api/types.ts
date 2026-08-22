@@ -70,10 +70,22 @@ export interface StartSessionResponse {
   session_id: string;
 }
 
+/**
+ * The reference doc (PUBLIC_CHAT_UI_REFERENCE.md) describes `intent` as
+ * always null, but the live API actually classifies it — confirmed against a
+ * real response. Kept nullable since generic questions may not match any of
+ * these categories.
+ */
+export type ChatIntent =
+  | "contact_request"
+  | "project_inquiry"
+  | "skill_inquiry"
+  | "experience_inquiry";
+
 export interface ChatMessageResponse {
   role: "assistant";
   content: string;
-  intent: null;
+  intent: ChatIntent | null;
   created_at: string;
 }
 
@@ -82,5 +94,6 @@ export interface ChatMessage {
   role: "user" | "assistant";
   content: string;
   createdAt: string;
+  intent?: ChatIntent | null;
   pending?: boolean;
 }

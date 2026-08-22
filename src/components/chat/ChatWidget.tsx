@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { ChatHeader } from "@/components/chat/ChatHeader";
 import { MessageList } from "@/components/chat/MessageList";
 import { ChatInput } from "@/components/chat/ChatInput";
@@ -18,6 +18,15 @@ const SUGGESTIONS = [
 
 export function ChatWidget({ data }: { data: ChatfolioPage }) {
   const [portfolioOpen, setPortfolioOpen] = useState(false);
+  const [scrollToSectionId, setScrollToSectionId] = useState<string | null>(null);
+
+  const focusPortfolioSection = useCallback((sectionId: string) => {
+    setPortfolioOpen(true);
+    setScrollToSectionId(sectionId);
+  }, []);
+  const closePortfolio = useCallback(() => setPortfolioOpen(false), []);
+  const togglePortfolio = useCallback(() => setPortfolioOpen((v) => !v), []);
+  const clearScrollTarget = useCallback(() => setScrollToSectionId(null), []);
   const {
     sessionStatus,
     messages,
@@ -40,7 +49,7 @@ export function ChatWidget({ data }: { data: ChatfolioPage }) {
         fullName={data.full_name}
         title={data.title}
         location={data.location}
-        onTogglePortfolio={() => setPortfolioOpen((v) => !v)}
+        onTogglePortfolio={togglePortfolio}
       />
 
       <div className="relative flex flex-1 overflow-hidden">
@@ -51,6 +60,7 @@ export function ChatWidget({ data }: { data: ChatfolioPage }) {
             isSending={isSending}
             suggestions={SUGGESTIONS}
             onPickSuggestion={(text) => void send(text)}
+            onOpenSection={focusPortfolioSection}
             inputDisabled={inputDisabled}
           />
 
@@ -74,7 +84,13 @@ export function ChatWidget({ data }: { data: ChatfolioPage }) {
           />
         </div>
 
-        <PortfolioPanel data={data} open={portfolioOpen} onClose={() => setPortfolioOpen(false)} />
+        <PortfolioPanel
+          data={data}
+          open={portfolioOpen}
+          onClose={closePortfolio}
+          scrollToSectionId={scrollToSectionId}
+          onScrolledToSection={clearScrollTarget}
+        />
       </div>
     </div>
   );

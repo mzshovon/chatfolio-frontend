@@ -1,5 +1,6 @@
 import { Avatar } from "@/components/ui/Avatar";
 import { MarkdownContent } from "@/components/chat/MarkdownContent";
+import { INTENT_SECTIONS } from "@/components/chat/intentSections";
 import { cn } from "@/lib/utils/cn";
 import { initials } from "@/lib/utils/date";
 import type { ChatMessage } from "@/lib/api/types";
@@ -7,10 +8,12 @@ import type { ChatMessage } from "@/lib/api/types";
 interface MessageBubbleProps {
   message: ChatMessage;
   assistantName: string;
+  onOpenSection?: (sectionId: string) => void;
 }
 
-export function MessageBubble({ message, assistantName }: MessageBubbleProps) {
+export function MessageBubble({ message, assistantName, onOpenSection }: MessageBubbleProps) {
   const isUser = message.role === "user";
+  const intentEntry = !isUser && message.intent ? INTENT_SECTIONS[message.intent] : null;
 
   return (
     <div
@@ -34,6 +37,16 @@ export function MessageBubble({ message, assistantName }: MessageBubbleProps) {
           <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
         ) : (
           <MarkdownContent content={message.content} />
+        )}
+
+        {intentEntry && (
+          <button
+            type="button"
+            onClick={() => onOpenSection?.(intentEntry.sectionId)}
+            className="mt-2 inline-flex w-fit items-center gap-1 rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-accent transition-colors hover:border-accent/40 hover:bg-accent-soft"
+          >
+            {intentEntry.label}
+          </button>
         )}
       </div>
     </div>

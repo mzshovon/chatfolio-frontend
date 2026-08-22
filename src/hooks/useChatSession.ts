@@ -118,6 +118,7 @@ export function useChatSession(slug: string) {
             role: "assistant",
             content: outcome.message.content,
             createdAt: outcome.message.created_at,
+            intent: outcome.message.intent,
           };
           setMessages((prev) => [...prev, assistantMessage]);
           // Own client-side cooldown: the doc frames the 2s server cooldown as
