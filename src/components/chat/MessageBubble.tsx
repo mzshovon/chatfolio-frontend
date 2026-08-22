@@ -1,4 +1,5 @@
 import { Avatar } from "@/components/ui/Avatar";
+import { MarkdownContent } from "@/components/chat/MarkdownContent";
 import { cn } from "@/lib/utils/cn";
 import { initials } from "@/lib/utils/date";
 import type { ChatMessage } from "@/lib/api/types";
@@ -25,11 +26,15 @@ export function MessageBubble({ message, assistantName }: MessageBubbleProps) {
       />
       <div
         className={cn(
-          "w-fit max-w-[min(68%,480px)] rounded-2xl px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap text-text-primary",
+          "w-fit max-w-[min(68%,480px)] rounded-2xl px-4 py-2.5 text-text-primary",
           isUser ? "bg-user-bubble" : "bg-asst-bubble"
         )}
       >
-        {message.content}
+        {isUser ? (
+          <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+        ) : (
+          <MarkdownContent content={message.content} />
+        )}
       </div>
     </div>
   );
