@@ -1,4 +1,4 @@
-import { ExternalLink, Download } from "lucide-react";
+import { ExternalLink, Download, Mail, Phone } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
 import { initials } from "@/lib/utils/date";
 import { getCvDownloadUrl } from "@/lib/api/publicChat";
@@ -22,6 +22,29 @@ export function ProfileSummary({ data }: ProfileSummaryProps) {
         <div className="text-[13px] text-text-secondary">
           {[data.title, data.location].filter(Boolean).join(" · ")}
         </div>
+
+        {(data.contact_email || data.phone) && (
+          <div className="mt-1 flex flex-col gap-1">
+            {data.contact_email && (
+              <a
+                href={`mailto:${data.contact_email}`}
+                className="inline-flex items-center gap-1.5 text-[13px] text-text-secondary transition-colors hover:text-accent"
+              >
+                <Mail className="h-3.5 w-3.5 shrink-0" />
+                <span className="truncate">{data.contact_email}</span>
+              </a>
+            )}
+            {data.phone && (
+              <a
+                href={`tel:${data.phone}`}
+                className="inline-flex items-center gap-1.5 text-[13px] text-text-secondary transition-colors hover:text-accent"
+              >
+                <Phone className="h-3.5 w-3.5 shrink-0" />
+                <span>{data.phone}</span>
+              </a>
+            )}
+          </div>
+        )}
 
         {socials.length > 0 && (
           <div className="mt-1 flex flex-wrap gap-2">
