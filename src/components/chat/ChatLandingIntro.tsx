@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { LiveAvatar } from "@/components/chat/LiveAvatar";
 import { initials } from "@/lib/utils/date";
 import type { ChatfolioPage } from "@/lib/api/types";
@@ -30,10 +29,6 @@ export function ChatLandingIntro({ data, suggestions, onPick, disabled }: ChatLa
   const firstName = data.full_name.split(" ")[0] || data.full_name;
   const openingLine = buildOpeningLine(data, firstName);
   const previewSkills = data.skills.slice(0, 5);
-  // Real recruiter-view counts aren't tracked by the API yet — a stable
-  // per-visit placeholder in the 10-30 range, per product ask. Computed once
-  // client-side and exempted from hydration matching since it's decorative.
-  const [recruiterCount] = useState(() => 10 + Math.floor(Math.random() * 21));
 
   return (
     <div className="mx-auto flex w-full max-w-[560px] flex-col items-center gap-10 pt-2 pb-2">
@@ -94,14 +89,16 @@ export function ChatLandingIntro({ data, suggestions, onPick, disabled }: ChatLa
         </div>
       </div>
 
-      <div className="-mt-6 flex items-center gap-2 text-xs text-text-muted">
-        <span
-          className="h-[7px] w-[7px] shrink-0 rounded-full bg-live"
-          style={{ boxShadow: "0 0 0 3px var(--live-subtle)" }}
-          aria-hidden="true"
-        />
-        <span suppressHydrationWarning>{recruiterCount} recruiters connected this month</span>
-      </div>
+      {Boolean(data.recruiter_count) && (
+        <div className="-mt-6 flex items-center gap-2 text-xs text-text-muted">
+          <span
+            className="h-[7px] w-[7px] shrink-0 rounded-full bg-live"
+            style={{ boxShadow: "0 0 0 3px var(--live-subtle)" }}
+            aria-hidden="true"
+          />
+          <span>{data.recruiter_count} recruiters connected this month</span>
+        </div>
+      )}
 
       <div className="flex w-full flex-col items-center gap-3">
         <span className="text-[11px] font-medium tracking-wider text-text-muted uppercase">

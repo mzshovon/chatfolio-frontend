@@ -70,6 +70,7 @@ export interface ChatfolioPage {
   education: Education[];
   contact_cta_config: ContactCtaConfig | null;
   cv_downloadable: boolean;
+  recruiter_count: number | null;
 }
 
 export interface StartSessionResponse {
