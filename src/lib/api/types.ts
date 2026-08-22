@@ -53,6 +53,12 @@ export interface ChatfolioPage {
   full_name: string;
   title: string | null;
   location: string | null;
+  /**
+   * Not documented in PUBLIC_CHAT_UI_REFERENCE.md today — the endpoint has no
+   * photo field yet. Kept optional so the UI degrades to an initials avatar
+   * until the backend actually adds one, without breaking either way.
+   */
+  avatar_url?: string | null;
   contact_email: string | null;
   phone: string | null;
   social_links: SocialLinks | null;

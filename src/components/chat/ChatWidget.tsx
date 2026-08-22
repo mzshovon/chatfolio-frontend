@@ -14,6 +14,7 @@ const SUGGESTIONS = [
   "Tell me about a project you're proud of",
   "What are your key skills?",
   "Are you open to new roles?",
+  "What kind of problems do you love solving?",
 ];
 
 export function ChatWidget({ data }: { data: ChatfolioPage }) {
@@ -44,17 +45,19 @@ export function ChatWidget({ data }: { data: ChatfolioPage }) {
   const firstName = data.full_name.split(" ")[0] || data.full_name;
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex h-dvh flex-col">
       <ChatHeader
         fullName={data.full_name}
         title={data.title}
         location={data.location}
+        avatarUrl={data.avatar_url}
         onTogglePortfolio={togglePortfolio}
       />
 
       <div className="relative flex flex-1 overflow-hidden">
         <div className="flex min-w-0 flex-1 flex-col">
           <MessageList
+            data={data}
             messages={messages}
             assistantName={data.full_name}
             isSending={isSending}

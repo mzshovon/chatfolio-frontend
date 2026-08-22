@@ -4,11 +4,12 @@ import { useEffect, useRef } from "react";
 import { Avatar } from "@/components/ui/Avatar";
 import { TypingDots } from "@/components/ui/TypingDots";
 import { MessageBubble } from "@/components/chat/MessageBubble";
-import { WelcomeSuggestions } from "@/components/chat/WelcomeSuggestions";
+import { ChatLandingIntro } from "@/components/chat/ChatLandingIntro";
 import { initials } from "@/lib/utils/date";
-import type { ChatMessage } from "@/lib/api/types";
+import type { ChatfolioPage, ChatMessage } from "@/lib/api/types";
 
 interface MessageListProps {
+  data: ChatfolioPage;
   messages: ChatMessage[];
   assistantName: string;
   isSending: boolean;
@@ -19,6 +20,7 @@ interface MessageListProps {
 }
 
 export function MessageList({
+  data,
   messages,
   assistantName,
   isSending,
@@ -37,8 +39,8 @@ export function MessageList({
   return (
     <div ref={listRef} className="flex flex-1 flex-col gap-4 overflow-y-auto px-4 py-6 sm:px-6">
       {messages.length === 0 && (
-        <WelcomeSuggestions
-          firstName={assistantName.split(" ")[0] || assistantName}
+        <ChatLandingIntro
+          data={data}
           suggestions={suggestions}
           onPick={onPickSuggestion}
           disabled={inputDisabled}

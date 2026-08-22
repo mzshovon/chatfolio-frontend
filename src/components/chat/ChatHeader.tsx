@@ -1,5 +1,5 @@
 import { PanelRight } from "lucide-react";
-import { Avatar } from "@/components/ui/Avatar";
+import { LiveAvatar } from "@/components/chat/LiveAvatar";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { initials } from "@/lib/utils/date";
 
@@ -7,22 +7,29 @@ interface ChatHeaderProps {
   fullName: string;
   title: string | null;
   location: string | null;
+  avatarUrl?: string | null;
   onTogglePortfolio: () => void;
 }
 
-export function ChatHeader({ fullName, title, location, onTogglePortfolio }: ChatHeaderProps) {
+export function ChatHeader({
+  fullName,
+  title,
+  location,
+  avatarUrl,
+  onTogglePortfolio,
+}: ChatHeaderProps) {
   const subtitle = [title, location].filter(Boolean).join(" · ");
 
   return (
-    <header className="flex items-center justify-between gap-3 border-b border-border bg-surface px-4 py-3 sm:px-6">
-      <div className="flex min-w-0 items-center gap-3">
-        <Avatar label={initials(fullName)} />
+    <header className="sticky top-0 z-20 flex items-center justify-between gap-4 border-b border-border-subtle bg-bg px-4 py-3 sm:px-6">
+      <div className="flex min-w-0 items-center gap-2.5">
+        <LiveAvatar label={initials(fullName)} imageUrl={avatarUrl} showRing />
         <div className="min-w-0">
-          <div className="truncate text-[15px] leading-tight font-semibold text-text-primary">
+          <div className="truncate text-[13.5px] leading-tight font-semibold text-text-primary">
             Chat with {fullName}
           </div>
           {subtitle && (
-            <div className="truncate text-xs leading-tight text-text-secondary">{subtitle}</div>
+            <div className="truncate text-[11.5px] leading-tight text-text-muted">{subtitle}</div>
           )}
         </div>
       </div>
@@ -30,10 +37,11 @@ export function ChatHeader({ fullName, title, location, onTogglePortfolio }: Cha
         <button
           type="button"
           onClick={onTogglePortfolio}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3.5 py-2 text-[13px] font-medium text-text-primary transition-colors hover:bg-surface-2"
+          aria-label="View full portfolio"
+          className="shadow-soft flex items-center gap-1.5 rounded-[9px] border border-border bg-surface px-3.5 py-[7px] text-[13px] font-medium text-text-secondary transition-colors hover:border-accent hover:bg-accent-soft hover:text-accent"
         >
-          <PanelRight className="h-4 w-4" />
-          <span className="hidden sm:inline">Portfolio</span>
+          <PanelRight className="h-[13px] w-[13px] opacity-75" />
+          <span className="hidden sm:inline">View Portfolio</span>
         </button>
         <ThemeToggle />
       </div>

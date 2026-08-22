@@ -39,8 +39,8 @@ export function ChatInput({
   }
 
   return (
-    <div className="flex flex-col gap-1.5 border-t border-border bg-surface px-4 py-3.5 sm:px-6">
-      <div className="flex items-end gap-2.5">
+    <div className="sticky bottom-0 z-10 border-t border-border-subtle bg-bg px-4 pt-3.5 pb-4 sm:px-6">
+      <div className="shadow-elevated mx-auto flex w-full max-w-[700px] items-end gap-2.5 rounded-[13px] border border-border bg-surface p-2 pl-4 transition-[border-color,box-shadow] focus-within:border-accent focus-within:shadow-[0_0_0_3px_var(--accent-glow)]">
         <textarea
           ref={textareaRef}
           value={draft}
@@ -49,7 +49,7 @@ export function ChatInput({
           placeholder={placeholder}
           disabled={disabled}
           rows={1}
-          className="max-h-[120px] min-h-[42px] flex-1 resize-none rounded-lg border border-border bg-bg px-3.5 py-2.5 text-sm text-text-primary outline-none placeholder:text-text-secondary disabled:opacity-60"
+          className="max-h-[120px] min-h-[36px] flex-1 resize-none border-none bg-transparent py-2 text-sm text-text-primary outline-none placeholder:text-text-muted disabled:opacity-60"
         />
         <button
           type="button"
@@ -57,17 +57,17 @@ export function ChatInput({
           disabled={sendDisabled}
           aria-label="Send message"
           className={cn(
-            "flex h-[42px] items-center justify-center gap-1.5 rounded-lg px-4 text-sm font-semibold transition-colors",
+            "flex h-9 w-9 shrink-0 items-center justify-center rounded-[9px] transition-[opacity,transform]",
             sendDisabled
               ? "cursor-not-allowed bg-border text-text-secondary"
-              : "bg-accent text-white hover:bg-accent-hover"
+              : "bg-accent text-white hover:scale-105 hover:opacity-90 active:scale-95"
           )}
         >
-          <span className="hidden sm:inline">{isSending ? "Sending…" : "Send"}</span>
-          <SendHorizontal className="h-4 w-4" strokeWidth={2} />
+          <SendHorizontal className="h-4 w-4" strokeWidth={2.5} />
+          <span className="sr-only">{isSending ? "Sending…" : "Send"}</span>
         </button>
       </div>
-      <div className="flex justify-between text-[11px] text-text-secondary">
+      <div className="mx-auto flex w-full max-w-[700px] justify-between px-1 pt-2 text-[11px] text-text-muted">
         <span className={overLimit ? "text-error-text" : undefined}>
           {overLimit ? `${charLen}/${maxLength} — too long` : `${charLen}/${maxLength}`}
         </span>
