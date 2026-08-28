@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { ChatWidget } from "@/components/chat/ChatWidget";
-import { fetchChatfolioPage } from "@/lib/api/publicChat";
+import { fetchChatfolioPage } from "@/lib/api/publicChat.server";
 
 export async function generateMetadata(props: PageProps<"/[slug]">): Promise<Metadata> {
   const { slug } = await props.params;

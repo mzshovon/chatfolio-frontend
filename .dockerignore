@@ -1,0 +1,23 @@
+# Keeps the build context small and keeps local dev artifacts out of image
+# layers. Nothing in the build needs .env.local — BACKEND_API_URL is a pure
+# runtime var (see Dockerfile), never read at build time.
+node_modules
+.next
+out
+
+.env
+.env.local
+.env*.local
+
+.git
+.gitignore
+
+README.md
+*.md
+
+.DS_Store
+npm-debug.log*
+
+Dockerfile
+docker-compose.yml
+.dockerignore

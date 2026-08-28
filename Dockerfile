@@ -13,13 +13,6 @@ FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
-# The app fetches the backend directly from the browser (src/lib/env.ts), so
-# this has to be a NEXT_PUBLIC_ var — which Next.js bakes into the client
-# bundle at build time, not read at container runtime. That means changing it
-# requires a rebuild (`docker compose build --build-arg ...` / this ARG),
-# unlike PORT/HOSTNAME below. Passed in via docker-compose.yml's `build.args`.
-ARG NEXT_PUBLIC_API_BASE_URL
-ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 # --webpack (set in package.json's build script): Next.js 16 defaults `next
 # build` to Turbopack, whose production build path is far more memory-hungry
 # than webpack's for this app — it OOM-killed on a 2GB host where webpack
@@ -31,7 +24,12 @@ RUN npm run build
 FROM base AS runner
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-# Overridable at runtime: docker run -e PORT=8080 -e HOSTNAME=...
+# All overridable at runtime: docker run -e PORT=8080 -e BACKEND_API_URL=...
+# src/proxy.ts reads BACKEND_API_URL fresh on every request (Next.js 16's
+# `proxy` convention, evaluated at runtime, not baked in at build time like a
+# NEXT_PUBLIC_ var would be) — no rebuild needed to point at a different
+# backend. No default: an unset value makes every /api/v1/* call fail loudly
+# (500 with a clear message) rather than silently 404.
 ENV PORT=3001
 ENV HOSTNAME=0.0.0.0
 

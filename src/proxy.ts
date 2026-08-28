@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { getBackendApiUrl } from "@/lib/env.server";
+import { API_BASE_PATH } from "@/lib/env";
 
 /**
  * The apex domain candidate subdomains are served under, e.g. "chatfolio.chat"
@@ -38,12 +40,44 @@ function extractSubdomain(host: string): string | null {
 }
 
 /**
+ * Reverse-proxies every browser-facing `/api/v1/*` call to the real backend
+ * (BACKEND_API_URL). The browser never talks to the backend directly — it
+ * can't resolve an internal Docker hostname anyway, and this also sidesteps
+ * CORS entirely for this flow: the browser only ever sees same-origin
+ * requests, regardless of which candidate subdomain it's on. BACKEND_API_URL
+ * is read fresh per request (not baked in at build time like a NEXT_PUBLIC_
+ * var would be), so the same built image can point at a different backend
+ * per environment with just a container env var, no rebuild.
+ */
+function proxyApiRequest(request: NextRequest): NextResponse | null {
+  const { pathname, search } = request.nextUrl;
+  if (!pathname.startsWith(`${API_BASE_PATH}/`) && pathname !== API_BASE_PATH) {
+    return null;
+  }
+
+  let backendOrigin: string;
+  try {
+    backendOrigin = getBackendApiUrl();
+  } catch {
+    return NextResponse.json(
+      { detail: "Server misconfigured: BACKEND_API_URL is not set." },
+      { status: 500 }
+    );
+  }
+
+  return NextResponse.rewrite(new URL(`${backendOrigin}${pathname}${search}`));
+}
+
+/**
  * Lets a candidate's Chatfolio be reached at either `chatfolio.chat/{slug}`
  * or `{slug}.chatfolio.chat` — the latter rewritten transparently to the
  * existing `/[slug]` route (URL bar keeps showing the subdomain) so no new
  * pages or API calls are needed; it's purely a routing alias.
  */
 export function proxy(request: NextRequest) {
+  const apiResponse = proxyApiRequest(request);
+  if (apiResponse) return apiResponse;
+
   const host = request.headers.get("host") ?? request.nextUrl.hostname;
   const subdomain = extractSubdomain(host);
 
