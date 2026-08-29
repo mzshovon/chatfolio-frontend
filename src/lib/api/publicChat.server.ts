@@ -7,6 +7,17 @@ function chatfolioUrl(slug: string): string {
   return `${getBackendApiUrl()}/api/v1/public/chatfolio/${encodeURIComponent(slug)}`;
 }
 
+/**
+ * This is a genuine server-to-server call (no browser involved), so unlike
+ * client-side fetches it carries no Origin header by default. If
+ * BACKEND_API_URL points at a public domain sitting behind an nginx gate
+ * that does `if ($http_origin !~* ...) return 403;` (as api.chatfolio.net
+ * does), the request gets rejected without this. Node's fetch() lets us set
+ * Origin manually (a browser wouldn't), so we attach one that's already on
+ * that allowlist rather than opening the gate to no-Origin requests.
+ */
+const SERVER_FETCH_HEADERS = { Origin: "https://chatfolio.chat" };
+
 export type ChatfolioPageResult =
   | { kind: "ok"; data: ChatfolioPage }
   | { kind: "redirect"; slug: string }
@@ -29,6 +40,7 @@ export async function fetchChatfolioPage(slug: string): Promise<ChatfolioPageRes
   const res = await fetch(chatfolioUrl(slug), {
     redirect: "manual",
     cache: "no-store",
+    headers: SERVER_FETCH_HEADERS,
   });
 
   if (res.status === 307 || res.status === 308) {
@@ -39,7 +51,10 @@ export async function fetchChatfolioPage(slug: string): Promise<ChatfolioPageRes
     }
     // Location header didn't parse as expected — fall back to a normal
     // redirect-following request rather than failing outright.
-    const followed = await fetch(chatfolioUrl(slug), { cache: "no-store" });
+    const followed = await fetch(chatfolioUrl(slug), {
+      cache: "no-store",
+      headers: SERVER_FETCH_HEADERS,
+    });
     if (followed.status === 404) return { kind: "not-found" };
     await assertOk(followed);
     return { kind: "ok", data: await followed.json() };
