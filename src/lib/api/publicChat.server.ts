@@ -1,6 +1,6 @@
 import "server-only";
 import { getBackendApiUrl } from "@/lib/env.server";
-import { assertOk } from "./client";
+import { assertOk, retryFetch } from "./client";
 import type { ChatfolioPage } from "./types";
 
 function chatfolioUrl(slug: string): string {
@@ -37,7 +37,7 @@ function extractSlugFromLocation(location: string): string | null {
  * silently rendering the new data under the old path.
  */
 export async function fetchChatfolioPage(slug: string): Promise<ChatfolioPageResult> {
-  const res = await fetch(chatfolioUrl(slug), {
+  const res = await retryFetch(chatfolioUrl(slug), {
     redirect: "manual",
     cache: "no-store",
     headers: SERVER_FETCH_HEADERS,
@@ -51,7 +51,7 @@ export async function fetchChatfolioPage(slug: string): Promise<ChatfolioPageRes
     }
     // Location header didn't parse as expected — fall back to a normal
     // redirect-following request rather than failing outright.
-    const followed = await fetch(chatfolioUrl(slug), {
+    const followed = await retryFetch(chatfolioUrl(slug), {
       cache: "no-store",
       headers: SERVER_FETCH_HEADERS,
     });
