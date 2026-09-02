@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { HomeSlugForm } from "@/components/home/HomeSlugForm";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
@@ -5,7 +6,14 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col">
       <header className="flex items-center justify-between px-6 py-5 sm:px-10">
-        <span className="text-sm font-semibold tracking-tight text-text-primary">Chatfolio</span>
+        <Image
+          src="/Logo.svg"
+          alt="Chatfolio"
+          width={178}
+          height={89}
+          className="h-8 w-auto rounded-md"
+          priority
+        />
         <ThemeToggle />
       </header>
 

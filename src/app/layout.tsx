@@ -19,6 +19,11 @@ const dmSerif = DM_Serif_Display({
 export const metadata: Metadata = {
   title: "Chatfolio",
   description: "Chat with a candidate's AI-grounded portfolio.",
+  icons: {
+    icon: "/chatfolio-icon.png",
+    shortcut: "/chatfolio-icon.png",
+    apple: "/chatfolio-icon.png",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
