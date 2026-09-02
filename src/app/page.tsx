@@ -11,7 +11,7 @@ export default function Home() {
           alt="Chatfolio"
           width={178}
           height={89}
-          className="h-8 w-auto rounded-md"
+          className="h-12 w-auto rounded-md sm:h-14"
           priority
         />
         <ThemeToggle />
