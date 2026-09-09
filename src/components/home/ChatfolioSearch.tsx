@@ -218,7 +218,10 @@ export function ChatfolioSearch() {
               <button
                 key={jt.value}
                 type="button"
-                onClick={() => setJobType((cur) => (cur === jt.value ? null : jt.value))}
+                onClick={() => {
+                  setJobType((cur) => (cur === jt.value ? null : jt.value));
+                  setOpen(true);
+                }}
                 className={cn(
                   "rounded-full border border-border px-3 py-1 text-xs font-medium text-text-secondary transition-colors hover:text-text-primary",
                   jobType === jt.value && "border-accent bg-accent text-white hover:text-white"
@@ -233,8 +236,11 @@ export function ChatfolioSearch() {
             <MapPin className="h-3.5 w-3.5 shrink-0 text-text-secondary" />
             <input
               value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="Area, e.g. London"
+              onChange={(e) => {
+                setLocation(e.target.value);
+                setOpen(true);
+              }}
+              placeholder="Area, e.g. Dhaka"
               aria-label="Filter by location"
               className="min-w-0 flex-1 bg-transparent text-xs text-text-primary outline-none placeholder:text-text-secondary"
             />
@@ -244,7 +250,10 @@ export function ChatfolioSearch() {
             <Briefcase className="h-3.5 w-3.5 shrink-0 text-text-secondary" />
             <input
               value={field}
-              onChange={(e) => setField(e.target.value)}
+              onChange={(e) => {
+                setField(e.target.value);
+                setOpen(true);
+              }}
               placeholder="Profession, e.g. Backend"
               aria-label="Filter by profession"
               className="min-w-0 flex-1 bg-transparent text-xs text-text-primary outline-none placeholder:text-text-secondary"
@@ -271,7 +280,7 @@ export function ChatfolioSearch() {
         <div
           id="chatfolio-search-results"
           role="listbox"
-          className="absolute z-20 mt-2 w-full overflow-hidden rounded-xl border border-border bg-surface shadow-elevated"
+          className="absolute z-20 mt-2 max-h-[min(22rem,60vh)] w-full overflow-y-auto overscroll-contain rounded-xl border border-border bg-surface shadow-elevated"
         >
           {results.map((result, i) => {
             const label = recruiterLabel(result.recruiter_count);

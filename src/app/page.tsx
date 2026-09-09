@@ -26,20 +26,18 @@ export default function Home() {
         <ThemeToggle />
       </header>
 
-      <div className="flex flex-1 flex-col items-center justify-center gap-9 px-6 py-10 text-center">
-        <div className="flex flex-col items-center gap-4">
+      <div className="flex flex-1 flex-col items-center gap-5 px-6 pt-6 pb-10 text-center sm:pt-10">
+        <div className="flex flex-col items-center gap-2.5">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-accent-soft px-3 py-1 text-xs font-medium text-accent-hover dark:text-accent">
             <Sparkles className="h-3.5 w-3.5" />
             Built for recruiters who move fast
           </span>
-          <h1 className="max-w-xl text-3xl font-semibold text-text-primary sm:text-4xl">
-            Skip the résumé.
-            <br className="hidden sm:block" /> Chat straight with a candidate&apos;s real story.
+          <h1 className="max-w-xl text-2xl font-semibold text-text-primary sm:text-3xl">
+            Skip the resume — chat with a candidate&apos;s real story.
           </h1>
-          <p className="mx-auto max-w-lg text-sm leading-relaxed text-text-secondary sm:text-base">
-            Every candidate here has a living Chatfolio — search by name, role, or location,
-            then ask their AI anything: skills, projects, availability, or how to get in touch.
-            Grounded answers, no guesswork, no waiting on a callback.
+          <p className="mx-auto max-w-lg text-sm leading-relaxed text-text-secondary">
+            Search by name, role, or location, then ask their AI about skills, projects,
+            availability, or how to reach them. Grounded answers, no waiting on a callback.
           </p>
         </div>
 
@@ -56,6 +54,10 @@ export default function Home() {
           </span>
         </div>
       </div>
+
+      <footer className="px-6 py-6 text-center text-xs text-text-secondary">
+        &copy; 2026 Chatfolio. All rights reserved.
+      </footer>
     </main>
   );
 }
