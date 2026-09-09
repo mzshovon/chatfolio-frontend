@@ -1,6 +1,6 @@
 import { API_BASE_PATH } from "@/lib/env";
 import { ApiError, assertOk, parseErrorDetail } from "./client";
-import type { ChatMessageResponse, StartSessionResponse } from "./types";
+import type { ChatfolioSearchResult, ChatMessageResponse, JobType, StartSessionResponse } from "./types";
 
 /**
  * Client-side calls only — same-origin, relative paths. src/proxy.ts
@@ -16,6 +16,35 @@ function chatfolioUrl(slug: string): string {
 /** Point an <a href> or window.location at this directly — never fetch() it. */
 export function getCvDownloadUrl(slug: string): string {
   return `${chatfolioUrl(slug)}/cv`;
+}
+
+export interface ChatfolioSearchParams {
+  username?: string;
+  location?: string;
+  jobType?: JobType;
+  field?: string;
+}
+
+/**
+ * Recruiter-facing discovery. All params optional and combine with AND;
+ * called with none of them the backend returns the 25 most recently
+ * published Chatfolios. An empty array is a normal "no matches" result, not
+ * an error — never a 404.
+ */
+export async function searchChatfolios(
+  params: ChatfolioSearchParams = {},
+  signal?: AbortSignal
+): Promise<ChatfolioSearchResult[]> {
+  const query = new URLSearchParams();
+  if (params.username?.trim()) query.set("username", params.username.trim());
+  if (params.location?.trim()) query.set("location", params.location.trim());
+  if (params.jobType) query.set("job_type", params.jobType);
+  if (params.field?.trim()) query.set("field", params.field.trim());
+
+  const qs = query.toString();
+  const res = await fetch(`${API_BASE_PATH}/public/chatfolio/search${qs ? `?${qs}` : ""}`, { signal });
+  await assertOk(res);
+  return res.json();
 }
 
 export async function startChatSession(slug: string): Promise<string> {

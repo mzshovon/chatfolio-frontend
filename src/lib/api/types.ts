@@ -73,6 +73,15 @@ export interface ChatfolioPage {
   recruiter_count: number | null;
 }
 
+export type JobType = "remote" | "onsite" | "hybrid";
+
+/** One row from GET /public/chatfolio/search — deliberately lightweight, not the full profile. */
+export interface ChatfolioSearchResult {
+  slug: string;
+  full_name: string;
+  recruiter_count: number | null;
+}
+
 export interface StartSessionResponse {
   session_id: string;
 }
