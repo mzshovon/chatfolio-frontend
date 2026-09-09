@@ -7,11 +7,19 @@ export default function Home() {
     <main className="flex min-h-screen flex-col">
       <header className="flex items-center justify-between px-6 py-5 sm:px-10">
         <Image
-          src="/Logo.svg"
+          src="/Logo-light.png"
           alt="Chatfolio"
           width={178}
           height={89}
-          className="h-12 w-auto rounded-md sm:h-14"
+          className="h-12 w-auto sm:h-14 dark:hidden"
+          priority
+        />
+        <Image
+          src="/Logo-dark.png"
+          alt="Chatfolio"
+          width={178}
+          height={89}
+          className="hidden h-12 w-auto sm:h-14 dark:block"
           priority
         />
         <ThemeToggle />
