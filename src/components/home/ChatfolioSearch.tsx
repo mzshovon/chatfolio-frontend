@@ -212,67 +212,71 @@ export function ChatfolioSearch() {
       </div>
 
       {filtersOpen && (
-        <div className="mt-2 flex flex-wrap items-center gap-2 rounded-xl border border-border-subtle bg-surface-2 p-3">
-          <div className="flex flex-wrap gap-1.5">
-            {JOB_TYPES.map((jt) => (
-              <button
-                key={jt.value}
-                type="button"
-                onClick={() => {
-                  setJobType((cur) => (cur === jt.value ? null : jt.value));
+        <div className="mt-2 flex flex-col gap-3 rounded-xl border border-border-subtle bg-surface-2 p-3 sm:p-4">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <div className="flex min-w-0 items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2.5">
+              <MapPin className="h-4 w-4 shrink-0 text-text-secondary" />
+              <input
+                value={location}
+                onChange={(e) => {
+                  setLocation(e.target.value);
                   setOpen(true);
                 }}
-                className={cn(
-                  "rounded-full border border-border px-3 py-1 text-xs font-medium text-text-secondary transition-colors hover:text-text-primary",
-                  jobType === jt.value && "border-accent bg-accent text-white hover:text-white"
-                )}
+                placeholder="Area, e.g. Dhaka"
+                aria-label="Filter by location"
+                className="min-w-0 flex-1 bg-transparent text-sm text-text-primary outline-none placeholder:text-text-secondary"
+              />
+            </div>
+
+            <div className="flex min-w-0 items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2.5">
+              <Briefcase className="h-4 w-4 shrink-0 text-text-secondary" />
+              <input
+                value={field}
+                onChange={(e) => {
+                  setField(e.target.value);
+                  setOpen(true);
+                }}
+                placeholder="Profession, e.g. Backend"
+                aria-label="Filter by profession"
+                className="min-w-0 flex-1 bg-transparent text-sm text-text-primary outline-none placeholder:text-text-secondary"
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center gap-2">
+            <div className="flex flex-wrap justify-center gap-1.5">
+              {JOB_TYPES.map((jt) => (
+                <button
+                  key={jt.value}
+                  type="button"
+                  onClick={() => {
+                    setJobType((cur) => (cur === jt.value ? null : jt.value));
+                    setOpen(true);
+                  }}
+                  className={cn(
+                    "rounded-full border border-border px-3.5 py-1.5 text-xs font-medium text-text-secondary transition-colors hover:text-text-primary",
+                    jobType === jt.value && "border-accent bg-accent text-white hover:text-white"
+                  )}
+                >
+                  {jt.label}
+                </button>
+              ))}
+            </div>
+
+            {hasFilters && (
+              <button
+                type="button"
+                onClick={() => {
+                  setJobType(null);
+                  setLocation("");
+                  setField("");
+                }}
+                className="text-xs font-medium text-text-secondary underline-offset-2 hover:text-text-primary hover:underline"
               >
-                {jt.label}
+                Clear filters
               </button>
-            ))}
+            )}
           </div>
-
-          <div className="flex min-w-0 flex-1 items-center gap-1.5 rounded-lg border border-border bg-surface px-2.5 py-1.5">
-            <MapPin className="h-3.5 w-3.5 shrink-0 text-text-secondary" />
-            <input
-              value={location}
-              onChange={(e) => {
-                setLocation(e.target.value);
-                setOpen(true);
-              }}
-              placeholder="Area, e.g. Dhaka"
-              aria-label="Filter by location"
-              className="min-w-0 flex-1 bg-transparent text-xs text-text-primary outline-none placeholder:text-text-secondary"
-            />
-          </div>
-
-          <div className="flex min-w-0 flex-1 items-center gap-1.5 rounded-lg border border-border bg-surface px-2.5 py-1.5">
-            <Briefcase className="h-3.5 w-3.5 shrink-0 text-text-secondary" />
-            <input
-              value={field}
-              onChange={(e) => {
-                setField(e.target.value);
-                setOpen(true);
-              }}
-              placeholder="Profession, e.g. Backend"
-              aria-label="Filter by profession"
-              className="min-w-0 flex-1 bg-transparent text-xs text-text-primary outline-none placeholder:text-text-secondary"
-            />
-          </div>
-
-          {hasFilters && (
-            <button
-              type="button"
-              onClick={() => {
-                setJobType(null);
-                setLocation("");
-                setField("");
-              }}
-              className="text-xs font-medium text-text-secondary underline-offset-2 hover:text-text-primary hover:underline"
-            >
-              Clear
-            </button>
-          )}
         </div>
       )}
 
