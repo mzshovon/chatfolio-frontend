@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { MessageCircle, Sparkles, Zap } from "lucide-react";
 import { ChatfolioSearch } from "@/components/home/ChatfolioSearch";
+import { FeedbackWidget } from "@/components/feedback/FeedbackWidget";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 export default function Home() {
@@ -58,6 +59,8 @@ export default function Home() {
       <footer className="px-6 py-6 text-center text-xs text-text-secondary">
         &copy; 2026 Chatfolio. All rights reserved.
       </footer>
+
+      <FeedbackWidget />
     </main>
   );
 }
