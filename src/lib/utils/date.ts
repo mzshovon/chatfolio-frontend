@@ -31,3 +31,14 @@ export function initials(name: string): string {
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
+
+/**
+ * A name's first token isn't always a usable first name — honorifics like
+ * "Md." or "Dr." end in a period and read oddly mid-sentence ("...and Md..").
+ * Picks the first token that isn't one of those, falling back to the literal
+ * first token (or the full name) if every token looks like an honorific.
+ */
+export function firstNameFor(fullName: string): string {
+  const parts = fullName.trim().split(/\s+/).filter(Boolean);
+  return parts.find((p) => !p.endsWith(".")) ?? parts[0] ?? fullName;
+}

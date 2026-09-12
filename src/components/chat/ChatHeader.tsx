@@ -1,7 +1,8 @@
 import { PanelRight } from "lucide-react";
 import { LiveAvatar } from "@/components/chat/LiveAvatar";
+import { SchedulingWidget } from "@/components/scheduling/SchedulingWidget";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
-import { initials } from "@/lib/utils/date";
+import { firstNameFor, initials } from "@/lib/utils/date";
 
 interface ChatHeaderProps {
   fullName: string;
@@ -34,6 +35,7 @@ export function ChatHeader({
         </div>
       </div>
       <div className="flex shrink-0 items-center gap-2.5">
+        <SchedulingWidget candidateFirstName={firstNameFor(fullName)} />
         <button
           type="button"
           onClick={onTogglePortfolio}
