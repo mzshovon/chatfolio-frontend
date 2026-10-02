@@ -5,7 +5,7 @@ import { Avatar } from "@/components/ui/Avatar";
 import { TypingDots } from "@/components/ui/TypingDots";
 import { MessageBubble } from "@/components/chat/MessageBubble";
 import { ChatLandingIntro } from "@/components/chat/ChatLandingIntro";
-import { initials } from "@/lib/utils/date";
+import { firstNameFor, initials } from "@/lib/utils/date";
 import type { ChatfolioPage, ChatMessage } from "@/lib/api/types";
 
 interface MessageListProps {
@@ -17,6 +17,9 @@ interface MessageListProps {
   onPickSuggestion: (text: string) => void;
   onOpenSection: (sectionId: string) => void;
   inputDisabled: boolean;
+  sessionId: string | null;
+  meetingsUnavailable: boolean;
+  onOpenScheduling: () => void;
 }
 
 export function MessageList({
@@ -28,6 +31,9 @@ export function MessageList({
   onPickSuggestion,
   onOpenSection,
   inputDisabled,
+  sessionId,
+  meetingsUnavailable,
+  onOpenScheduling,
 }: MessageListProps) {
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -53,6 +59,11 @@ export function MessageList({
           message={message}
           assistantName={assistantName}
           onOpenSection={onOpenSection}
+          candidateFirstName={firstNameFor(assistantName)}
+          contactEmail={data.contact_email}
+          sessionId={sessionId}
+          meetingsUnavailable={meetingsUnavailable}
+          onOpenScheduling={onOpenScheduling}
         />
       ))}
 

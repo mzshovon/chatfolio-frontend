@@ -56,8 +56,8 @@ export function CalendarStep({
     : [];
 
   return (
-    <div className="flex flex-1 flex-col sm:flex-row">
-      <div className="flex-1 border-border-subtle px-5 py-5 sm:border-r sm:px-6 sm:py-6">
+    <div className="flex flex-1 flex-col md:flex-row">
+      <div className="flex-1 border-border-subtle px-5 py-5 md:border-r md:px-6 md:py-6">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-base font-semibold text-text-primary">
             {month} <span className="text-text-secondary">{year}</span>
@@ -125,7 +125,7 @@ export function CalendarStep({
         </div>
       </div>
 
-      <div className="flex w-full flex-col px-5 py-5 sm:w-[220px] sm:px-6 sm:py-6">
+      <div className="flex w-full flex-col px-5 py-5 md:w-[200px] md:px-6 md:py-6 lg:w-[220px]">
         <div className="mb-3 flex items-center justify-between">
           <h4 className="text-sm font-semibold text-text-primary">
             {selectedDate ? formatSelectedDayShort(selectedDate) : "Pick a day"}

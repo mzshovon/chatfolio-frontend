@@ -1,5 +1,6 @@
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 import { formatFullDate, formatTimeRange, type TimeOfDay } from "@/lib/utils/calendar";
+import type { MeetingResult } from "@/lib/api/scheduling";
 
 interface ResultStepProps {
   kind: "success" | "error";
@@ -7,7 +8,9 @@ interface ResultStepProps {
   time: TimeOfDay;
   durationMinutes: 30 | 60;
   email: string;
+  meeting?: MeetingResult | null;
   errorMessage?: string;
+  canRetry?: boolean;
   onDone: () => void;
   onRetry: () => void;
 }
@@ -18,7 +21,9 @@ export function ResultStep({
   time,
   durationMinutes,
   email,
+  meeting,
   errorMessage,
+  canRetry = true,
   onDone,
   onRetry,
 }: ResultStepProps) {
@@ -38,18 +43,24 @@ export function ResultStep({
 
       <div className="flex flex-col gap-1.5">
         <h3 className="text-lg font-semibold text-text-primary">
-          {isSuccess ? "You're booked!" : "Something went wrong"}
+          {isSuccess ? "You're all set! 🎉" : "That didn't go through"}
         </h3>
         <p className="max-w-sm text-sm text-text-secondary">
           {isSuccess
-            ? `We've saved your request for ${formatFullDate(date)}, ${formatTimeRange(time, durationMinutes, false)}. Email confirmations aren't wired up yet, so hold onto this for now.`
-            : errorMessage || "We couldn't submit your booking request. Please try again."}
+            ? `A Google Meet is booked for ${formatFullDate(date)}, ${formatTimeRange(time, durationMinutes, false)}. We've emailed the invite to ${email}.`
+            : errorMessage || "We couldn't send that request. Please try again."}
         </p>
-        {isSuccess && <p className="text-xs text-text-muted">Sent to {email}</p>}
+        {isSuccess && (
+          <p className="text-xs text-text-muted">
+            {meeting?.meet_link
+              ? "The link is also pinned at the top of this chat."
+              : "Google is still generating the link — check your email and the top of this chat shortly."}
+          </p>
+        )}
       </div>
 
       <div className="mt-2 flex items-center gap-3">
-        {isSuccess ? (
+        {isSuccess || !canRetry ? (
           <button
             type="button"
             onClick={onDone}

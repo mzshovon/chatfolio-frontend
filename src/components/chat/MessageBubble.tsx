@@ -1,5 +1,6 @@
 import { Avatar } from "@/components/ui/Avatar";
 import { MarkdownContent } from "@/components/chat/MarkdownContent";
+import { MeetingRequestPrompt } from "@/components/chat/MeetingRequestPrompt";
 import { INTENT_SECTIONS } from "@/components/chat/intentSections";
 import { cn } from "@/lib/utils/cn";
 import { initials } from "@/lib/utils/date";
@@ -9,10 +10,25 @@ interface MessageBubbleProps {
   message: ChatMessage;
   assistantName: string;
   onOpenSection?: (sectionId: string) => void;
+  candidateFirstName: string;
+  contactEmail: string | null;
+  sessionId: string | null;
+  meetingsUnavailable: boolean;
+  onOpenScheduling: () => void;
 }
 
-export function MessageBubble({ message, assistantName, onOpenSection }: MessageBubbleProps) {
+export function MessageBubble({
+  message,
+  assistantName,
+  onOpenSection,
+  candidateFirstName,
+  contactEmail,
+  sessionId,
+  meetingsUnavailable,
+  onOpenScheduling,
+}: MessageBubbleProps) {
   const isUser = message.role === "user";
+  const isMeetingRequest = !isUser && message.intent === "meeting_request";
   const intentEntry = !isUser && message.intent ? INTENT_SECTIONS[message.intent] : null;
 
   return (
@@ -29,7 +45,8 @@ export function MessageBubble({ message, assistantName, onOpenSection }: Message
       />
       <div
         className={cn(
-          "w-fit max-w-[min(68%,480px)] rounded-2xl px-4 py-2.5 text-text-primary",
+          "w-fit rounded-2xl px-4 py-2.5 text-text-primary",
+          isMeetingRequest ? "max-w-[min(85%,380px)]" : "max-w-[min(68%,480px)]",
           isUser ? "bg-user-bubble" : "bg-asst-bubble"
         )}
       >
@@ -47,6 +64,16 @@ export function MessageBubble({ message, assistantName, onOpenSection }: Message
           >
             {intentEntry.label}
           </button>
+        )}
+
+        {isMeetingRequest && (
+          <MeetingRequestPrompt
+            candidateFirstName={candidateFirstName}
+            sessionId={sessionId}
+            contactEmail={contactEmail}
+            meetingsUnavailable={meetingsUnavailable}
+            onOpenScheduling={onOpenScheduling}
+          />
         )}
       </div>
     </div>

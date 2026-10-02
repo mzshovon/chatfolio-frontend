@@ -165,6 +165,7 @@ export function useChatSession(slug: string) {
   const cooldownSecondsLeft = cooldownActive ? Math.ceil((cooldownUntil - now) / 1000) : 0;
 
   return {
+    sessionId,
     sessionStatus,
     messages,
     draft,

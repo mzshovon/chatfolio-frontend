@@ -21,7 +21,7 @@ export function SchedulingSidebar({
   timezone,
 }: SchedulingSidebarProps) {
   return (
-    <div className="flex w-full shrink-0 flex-col gap-5 border-border-subtle px-5 py-5 sm:w-[270px] sm:border-r sm:py-6 sm:pl-6 sm:pr-8">
+    <div className="flex w-full shrink-0 flex-col gap-5 border-border-subtle px-5 py-5 md:w-[240px] md:border-r md:py-6 md:pr-6 md:pl-6 lg:w-[270px] lg:pr-8">
       <div>
         <Image
           src="/Logo-light.png"
@@ -41,10 +41,10 @@ export function SchedulingSidebar({
 
       <div className="flex flex-col gap-1">
         <h3 className="text-lg leading-snug font-semibold text-text-primary">
-          {durationMinutes}-minute call
+          {durationMinutes}-minute Google Meet
         </h3>
         <p className="text-sm text-text-secondary">
-          A quick call between a recruiter and {candidateFirstName}.
+          Grab {candidateFirstName} for a quick video chat.
         </p>
       </div>
 
@@ -82,8 +82,8 @@ export function SchedulingSidebar({
       )}
 
       <div className="flex items-center gap-2.5 text-sm text-text-secondary">
-        <Video className="h-4 w-4 shrink-0" />
-        Video call — link shared after booking
+        <Video className="h-4 w-4 shrink-0 text-live" />
+        Google Meet — link emailed after booking
       </div>
 
       <div className="flex items-center gap-2.5 text-sm text-text-secondary">

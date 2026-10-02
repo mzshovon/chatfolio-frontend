@@ -96,7 +96,8 @@ export type ChatIntent =
   | "contact_request"
   | "project_inquiry"
   | "skill_inquiry"
-  | "experience_inquiry";
+  | "experience_inquiry"
+  | "meeting_request";
 
 export interface ChatMessageResponse {
   role: "assistant";

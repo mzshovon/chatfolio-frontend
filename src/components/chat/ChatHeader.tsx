@@ -1,6 +1,6 @@
 import { PanelRight } from "lucide-react";
 import { LiveAvatar } from "@/components/chat/LiveAvatar";
-import { SchedulingWidget } from "@/components/scheduling/SchedulingWidget";
+import { SchedulingTriggerButton } from "@/components/scheduling/SchedulingTriggerButton";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { firstNameFor, initials } from "@/lib/utils/date";
 
@@ -10,6 +10,10 @@ interface ChatHeaderProps {
   location: string | null;
   avatarUrl?: string | null;
   onTogglePortfolio: () => void;
+  sessionId: string | null;
+  contactEmail: string | null;
+  meetingsUnavailable: boolean;
+  onOpenScheduling: () => void;
 }
 
 export function ChatHeader({
@@ -18,6 +22,10 @@ export function ChatHeader({
   location,
   avatarUrl,
   onTogglePortfolio,
+  sessionId,
+  contactEmail,
+  meetingsUnavailable,
+  onOpenScheduling,
 }: ChatHeaderProps) {
   const subtitle = [title, location].filter(Boolean).join(" · ");
 
@@ -35,7 +43,13 @@ export function ChatHeader({
         </div>
       </div>
       <div className="flex shrink-0 items-center gap-2.5">
-        <SchedulingWidget candidateFirstName={firstNameFor(fullName)} />
+        <SchedulingTriggerButton
+          candidateFirstName={firstNameFor(fullName)}
+          sessionId={sessionId}
+          contactEmail={contactEmail}
+          meetingsUnavailable={meetingsUnavailable}
+          onOpen={onOpenScheduling}
+        />
         <button
           type="button"
           onClick={onTogglePortfolio}
