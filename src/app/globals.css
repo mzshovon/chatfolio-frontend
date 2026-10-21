@@ -3,28 +3,29 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --bg: #f5f2ee;
+  --bg: #fbf9f4;
   --surface: #ffffff;
-  --surface-2: #faf8f5;
-  --border: #e2ddd6;
-  --border-subtle: #ede9e3;
-  --text-primary: #1a1a1a;
-  --text-secondary: #5e6e82;
-  --text-muted: #9ba8b5;
-  --accent: #c4891a;
-  --accent-hover: #a8730f;
-  --accent-soft: rgba(196, 137, 26, 0.09);
-  --accent-glow: rgba(196, 137, 26, 0.18);
-  --live: #16a34a;
-  --live-subtle: rgba(22, 163, 74, 0.1);
-  --user-bubble: #f3e8d3;
-  --asst-bubble: #ffffff;
-  --warn-bg: #fdf3e0;
-  --warn-text: #8a5a0a;
+  --surface-2: #f4eee2;
+  --border: #e4ded2;
+  --border-subtle: #ece6da;
+  --text-primary: #1e2222;
+  --text-secondary: #5e646b;
+  --text-muted: #8f8573;
+  --accent: #c8862e;
+  --accent-hover: #b3741f;
+  --accent-soft: rgba(200, 134, 46, 0.1);
+  --accent-glow: rgba(200, 134, 46, 0.2);
+  --live: #2f9e5c;
+  --live-subtle: rgba(47, 158, 92, 0.1);
+  --user-bubble: #1e2222;
+  --user-bubble-text: #fbf9f4;
+  --asst-bubble: #f4eee2;
+  --warn-bg: #f5e6cc;
+  --warn-text: #6e4a12;
   --error-bg: #fbe9e7;
-  --error-text: #b3261e;
-  --shadow-soft-val: 0 1px 2px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.04);
-  --shadow-elevated-val: 0 2px 4px rgba(0, 0, 0, 0.07), 0 6px 20px rgba(0, 0, 0, 0.05);
+  --error-text: #9a3b1f;
+  --shadow-soft-val: 0 1px 2px rgba(60, 40, 10, 0.06), 0 2px 8px rgba(60, 40, 10, 0.04);
+  --shadow-elevated-val: 0 2px 4px rgba(60, 40, 10, 0.07), 0 20px 40px -30px rgba(60, 40, 10, 0.4);
 }
 
 .dark {
@@ -43,6 +44,7 @@
   --live: #4ade80;
   --live-subtle: rgba(74, 222, 128, 0.1);
   --user-bubble: #2e2210;
+  --user-bubble-text: #eee9e0;
   --asst-bubble: #141d26;
   --warn-bg: #3a2a12;
   --warn-text: #f0c36d;
@@ -68,6 +70,7 @@
   --color-live: var(--live);
   --color-live-subtle: var(--live-subtle);
   --color-user-bubble: var(--user-bubble);
+  --color-user-bubble-text: var(--user-bubble-text);
   --color-asst-bubble: var(--asst-bubble);
   --color-warn-bg: var(--warn-bg);
   --color-warn-text: var(--warn-text);
@@ -76,7 +79,12 @@
   --shadow-soft: var(--shadow-soft-val);
   --shadow-elevated: var(--shadow-elevated-val);
   --font-sans: var(--font-dm-sans);
-  --font-display: var(--font-dm-serif);
+  --font-display: var(--font-lora);
+  --color-hero: #14171a;
+  --color-hero-2: #1a1e22;
+  --color-hero-border: #2a2f35;
+  --color-hero-text: #f1efea;
+  --color-hero-muted: #aeb4ba;
 }
 
 body {

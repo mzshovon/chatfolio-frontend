@@ -39,8 +39,8 @@ export function ChatInput({
   }
 
   return (
-    <div className="sticky bottom-0 z-10 border-t border-border-subtle bg-bg px-4 pt-3.5 pb-4 sm:px-6">
-      <div className="shadow-elevated mx-auto flex w-full max-w-[700px] items-end gap-2.5 rounded-[13px] border border-border bg-surface p-2 pl-4 transition-[border-color,box-shadow] focus-within:border-accent focus-within:shadow-[0_0_0_3px_var(--accent-glow)]">
+    <div className="border-t border-border-subtle bg-surface px-3.5 pt-2.5 pb-3">
+      <div className="flex w-full items-end gap-2 rounded-[14px] border-[1.5px] border-border bg-bg p-[5px] pl-3.5 transition-[border-color,box-shadow] focus-within:border-accent focus-within:shadow-[0_0_0_3px_var(--accent-glow)]">
         <textarea
           ref={textareaRef}
           value={draft}
@@ -57,7 +57,7 @@ export function ChatInput({
           disabled={sendDisabled}
           aria-label="Send message"
           className={cn(
-            "flex h-9 w-9 shrink-0 items-center justify-center rounded-[9px] transition-[opacity,transform]",
+            "flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] transition-[opacity,transform]",
             sendDisabled
               ? "cursor-not-allowed bg-border text-text-secondary"
               : "bg-accent text-white hover:scale-105 hover:opacity-90 active:scale-95"
@@ -67,7 +67,7 @@ export function ChatInput({
           <span className="sr-only">{isSending ? "Sending…" : "Send"}</span>
         </button>
       </div>
-      <div className="mx-auto flex w-full max-w-[700px] justify-between px-1 pt-2 text-[11px] text-text-muted">
+      <div className="flex justify-between gap-2.5 px-1 pt-1.5 text-[11.5px] text-text-muted">
         <span className={overLimit ? "text-error-text" : undefined}>
           {overLimit ? `${charLen}/${maxLength} — too long` : `${charLen}/${maxLength}`}
         </span>

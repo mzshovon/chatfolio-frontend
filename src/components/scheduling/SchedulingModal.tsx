@@ -44,6 +44,8 @@ interface SchedulingModalProps {
   onBooked: (meeting: MeetingResult) => void;
   /** The candidate's calendar isn't connected (409) — the parent hides the scheduling action for the rest of the session. */
   onUnavailable: () => void;
+  /** Recruiter details to pre-fill the booking form with, if they've introduced themselves. */
+  prefill?: { name: string; notes: string } | null;
 }
 
 export function SchedulingModal({
@@ -54,6 +56,7 @@ export function SchedulingModal({
   contactEmail,
   onBooked,
   onUnavailable,
+  prefill,
 }: SchedulingModalProps) {
   const [step, setStep] = useState<Step>("calendar");
 
@@ -119,6 +122,9 @@ export function SchedulingModal({
   // through retries of the same attempt (see handleSubmit).
   function selectTime(time: TimeOfDay) {
     setSelectedTime(time);
+    if (prefill) {
+      setForm((f) => ({ ...f, name: f.name || prefill.name, notes: f.notes || prefill.notes }));
+    }
     setRequestId(crypto.randomUUID());
     setStep("details");
   }

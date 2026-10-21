@@ -1,18 +1,19 @@
 import type { Metadata } from "next";
-import { DM_Sans, DM_Serif_Display } from "next/font/google";
+import { DM_Sans, Lora } from "next/font/google";
+import { RecruiterProvider } from "@/components/recruiter/RecruiterProvider";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import "./globals.css";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
 });
 
-const dmSerif = DM_Serif_Display({
-  variable: "--font-dm-serif",
+const lora = Lora({
+  variable: "--font-lora",
   subsets: ["latin"],
-  weight: ["400"],
+  weight: ["500", "600"],
   style: ["normal", "italic"],
 });
 
@@ -31,11 +32,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${dmSans.variable} ${dmSerif.variable} h-full antialiased`}
+      className={`${dmSans.variable} ${lora.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans bg-bg text-text-primary">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          {children}
+          <RecruiterProvider>{children}</RecruiterProvider>
         </ThemeProvider>
       </body>
     </html>

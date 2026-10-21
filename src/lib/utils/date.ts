@@ -42,3 +42,41 @@ export function firstNameFor(fullName: string): string {
   const parts = fullName.trim().split(/\s+/).filter(Boolean);
   return parts.find((p) => !p.endsWith(".")) ?? parts[0] ?? fullName;
 }
+
+/**
+ * Total career length in years, with overlapping roles counted once. Returns
+ * null when no experience has a usable start date.
+ */
+export function totalExperienceYears(
+  experiences: { start_date: string | null; end_date: string | null; is_current: boolean }[]
+): number | null {
+  const now = Date.now();
+  const spans = experiences
+    .map((e) => {
+      const start = e.start_date ? new Date(e.start_date).getTime() : NaN;
+      const end = e.is_current || !e.end_date ? now : new Date(e.end_date).getTime();
+      return [start, end] as const;
+    })
+    .filter(([s, e]) => !Number.isNaN(s) && !Number.isNaN(e) && e > s)
+    .sort((a, b) => a[0] - b[0]);
+  if (spans.length === 0) return null;
+
+  let totalMs = 0;
+  let [curStart, curEnd] = spans[0];
+  for (const [s, e] of spans.slice(1)) {
+    if (s <= curEnd) {
+      curEnd = Math.max(curEnd, e);
+    } else {
+      totalMs += curEnd - curStart;
+      [curStart, curEnd] = [s, e];
+    }
+  }
+  totalMs += curEnd - curStart;
+  return totalMs / (365.25 * 24 * 3600 * 1000);
+}
+
+export function formatYears(years: number): string {
+  if (years < 1) return "<1 yr";
+  const rounded = Math.round(years * 10) / 10;
+  return `${rounded} ${rounded === 1 ? "yr" : "yrs"}`;
+}

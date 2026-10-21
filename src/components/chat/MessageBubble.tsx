@@ -1,15 +1,12 @@
-import { Avatar } from "@/components/ui/Avatar";
+import { BookOpen } from "lucide-react";
 import { MarkdownContent } from "@/components/chat/MarkdownContent";
 import { MeetingRequestPrompt } from "@/components/chat/MeetingRequestPrompt";
 import { INTENT_SECTIONS } from "@/components/chat/intentSections";
-import { cn } from "@/lib/utils/cn";
-import { initials } from "@/lib/utils/date";
 import type { ChatMessage } from "@/lib/api/types";
 
 interface MessageBubbleProps {
   message: ChatMessage;
-  assistantName: string;
-  onOpenSection?: (sectionId: string) => void;
+  onOpenSection: (sectionId: string) => void;
   candidateFirstName: string;
   contactEmail: string | null;
   sessionId: string | null;
@@ -19,7 +16,6 @@ interface MessageBubbleProps {
 
 export function MessageBubble({
   message,
-  assistantName,
   onOpenSection,
   candidateFirstName,
   contactEmail,
@@ -27,55 +23,41 @@ export function MessageBubble({
   meetingsUnavailable,
   onOpenScheduling,
 }: MessageBubbleProps) {
-  const isUser = message.role === "user";
-  const isMeetingRequest = !isUser && message.intent === "meeting_request";
-  const intentEntry = !isUser && message.intent ? INTENT_SECTIONS[message.intent] : null;
+  if (message.role === "user") {
+    return (
+      <div className="animate-slide-in max-w-[85%] self-end rounded-2xl rounded-br-[4px] bg-user-bubble px-3.5 py-2.5 text-user-bubble-text">
+        <p className="text-sm leading-normal whitespace-pre-wrap">{message.content}</p>
+      </div>
+    );
+  }
+
+  const intentEntry = message.intent ? INTENT_SECTIONS[message.intent] : null;
 
   return (
-    <div
-      className={cn(
-        "flex animate-slide-in items-end gap-2",
-        isUser ? "flex-row-reverse self-end" : "flex-row self-start"
-      )}
-    >
-      <Avatar
-        size="sm"
-        variant={isUser ? "muted" : "accent"}
-        label={isUser ? "You" : initials(assistantName)}
-      />
-      <div
-        className={cn(
-          "w-fit rounded-2xl px-4 py-2.5 text-text-primary",
-          isMeetingRequest ? "max-w-[min(85%,380px)]" : "max-w-[min(68%,480px)]",
-          isUser ? "bg-user-bubble" : "bg-asst-bubble"
-        )}
-      >
-        {isUser ? (
-          <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
-        ) : (
-          <MarkdownContent content={message.content} />
-        )}
-
-        {intentEntry && (
-          <button
-            type="button"
-            onClick={() => onOpenSection?.(intentEntry.sectionId)}
-            className="mt-2 inline-flex w-fit items-center gap-1 rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-accent transition-colors hover:border-accent/40 hover:bg-accent-soft"
-          >
-            {intentEntry.label}
-          </button>
-        )}
-
-        {isMeetingRequest && (
-          <MeetingRequestPrompt
-            candidateFirstName={candidateFirstName}
-            sessionId={sessionId}
-            contactEmail={contactEmail}
-            meetingsUnavailable={meetingsUnavailable}
-            onOpenScheduling={onOpenScheduling}
-          />
-        )}
+    <div className="animate-slide-in flex max-w-[92%] flex-col gap-1.5 self-start">
+      <div className="rounded-2xl rounded-bl-[4px] bg-asst-bubble px-3.5 py-2.5 text-text-primary">
+        <MarkdownContent content={message.content} />
       </div>
+      {intentEntry && (
+        <button
+          type="button"
+          onClick={() => onOpenSection(intentEntry.sectionId)}
+          title="Show in CV"
+          className="inline-flex w-fit items-center gap-1 rounded-full border border-border bg-surface px-2.5 py-[3px] text-[11.5px] font-semibold text-accent-hover transition-colors hover:border-accent dark:text-accent"
+        >
+          <BookOpen className="h-3 w-3" />
+          {intentEntry.label}
+        </button>
+      )}
+      {message.intent === "meeting_request" && (
+        <MeetingRequestPrompt
+          candidateFirstName={candidateFirstName}
+          sessionId={sessionId}
+          contactEmail={contactEmail}
+          meetingsUnavailable={meetingsUnavailable}
+          onOpenScheduling={onOpenScheduling}
+        />
+      )}
     </div>
   );
 }

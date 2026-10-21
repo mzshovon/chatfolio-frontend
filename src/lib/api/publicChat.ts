@@ -1,6 +1,12 @@
 import { API_BASE_PATH } from "@/lib/env";
 import { ApiError, assertOk, parseErrorDetail } from "./client";
-import type { ChatfolioSearchResult, ChatMessageResponse, JobType, StartSessionResponse } from "./types";
+import type {
+  ChatfolioSearchResult,
+  ChatMessageResponse,
+  SearchFilterConfig,
+  StartSessionResponse,
+} from "./types";
+import { SEARCH_FILTERS } from "@/lib/search/searchFilters";
 
 /**
  * Client-side calls only — same-origin, relative paths. src/proxy.ts
@@ -20,9 +26,18 @@ export function getCvDownloadUrl(slug: string): string {
 
 export interface ChatfolioSearchParams {
   username?: string;
-  location?: string;
-  jobType?: JobType;
   field?: string;
+  /** Query params contributed by the selected filter options (see SearchFilterOption.params). */
+  filters?: Record<string, string | number>;
+}
+
+/**
+ * Filter options for the search page. Static today; when the backend ships
+ * GET /public/chatfolio/search/filters, fetch it here and fall back to the
+ * static config on failure — callers don't change.
+ */
+export async function getSearchFilters(): Promise<SearchFilterConfig> {
+  return SEARCH_FILTERS;
 }
 
 /**
@@ -37,9 +52,8 @@ export async function searchChatfolios(
 ): Promise<ChatfolioSearchResult[]> {
   const query = new URLSearchParams();
   if (params.username?.trim()) query.set("username", params.username.trim());
-  if (params.location?.trim()) query.set("location", params.location.trim());
-  if (params.jobType) query.set("job_type", params.jobType);
   if (params.field?.trim()) query.set("field", params.field.trim());
+  for (const [key, value] of Object.entries(params.filters ?? {})) query.set(key, String(value));
 
   const qs = query.toString();
   const res = await fetch(`${API_BASE_PATH}/public/chatfolio/search${qs ? `?${qs}` : ""}`, { signal });

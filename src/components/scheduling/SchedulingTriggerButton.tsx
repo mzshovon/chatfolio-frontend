@@ -1,6 +1,7 @@
 "use client";
 
-import { CalendarClock } from "lucide-react";
+import { CalendarClock, Mail } from "lucide-react";
+import { buttonClasses } from "@/components/ui/Button";
 
 interface SchedulingTriggerButtonProps {
   candidateFirstName: string;
@@ -8,6 +9,8 @@ interface SchedulingTriggerButtonProps {
   contactEmail: string | null;
   meetingsUnavailable: boolean;
   onOpen: () => void;
+  /** Short label for tight layouts such as the mobile candidate bar. */
+  compact?: boolean;
 }
 
 export function SchedulingTriggerButton({
@@ -16,14 +19,13 @@ export function SchedulingTriggerButton({
   contactEmail,
   meetingsUnavailable,
   onOpen,
+  compact = false,
 }: SchedulingTriggerButtonProps) {
   if (meetingsUnavailable) {
     return contactEmail ? (
-      <a
-        href={`mailto:${contactEmail}`}
-        className="hidden text-[13px] font-medium text-text-secondary underline-offset-2 transition-colors hover:text-text-primary hover:underline sm:inline"
-      >
-        Email {candidateFirstName} directly
+      <a href={`mailto:${contactEmail}`} className={buttonClasses("outline-dark", "px-4 py-2.5 text-[13px]")}>
+        <Mail className="h-3.5 w-3.5" />
+        {compact ? "Email" : `Email ${candidateFirstName}`}
       </a>
     ) : null;
   }
@@ -34,10 +36,10 @@ export function SchedulingTriggerButton({
       onClick={() => sessionId && onOpen()}
       disabled={!sessionId}
       aria-label={sessionId ? "Schedule a Google Meet" : "Connecting to chat"}
-      className="shadow-soft flex items-center gap-1.5 rounded-[9px] border border-border bg-surface px-3.5 py-[7px] text-[13px] font-medium text-text-secondary transition-colors hover:border-accent hover:bg-accent-soft hover:text-accent disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-border disabled:hover:bg-surface disabled:hover:text-text-secondary"
+      className={buttonClasses("primary", "px-[18px] py-3 text-sm")}
     >
-      <CalendarClock className="h-[13px] w-[13px] opacity-75" />
-      <span className="hidden sm:inline">{sessionId ? "Schedule a Meet" : "Connecting…"}</span>
+      <CalendarClock className="h-4 w-4" />
+      {!sessionId ? "Connecting…" : compact ? "Meet" : "Schedule a Meet"}
     </button>
   );
 }

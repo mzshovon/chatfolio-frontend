@@ -1,66 +1,45 @@
-import Image from "next/image";
-import { MessageCircle, Sparkles, Zap } from "lucide-react";
-import { ChatfolioSearch } from "@/components/home/ChatfolioSearch";
 import { FeedbackWidget } from "@/components/feedback/FeedbackWidget";
-import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { CandidateSearch } from "@/components/home/CandidateSearch";
+import { IntroPrompt } from "@/components/recruiter/IntroPrompt";
+import { RecruiterHeader } from "@/components/layout/RecruiterHeader";
+import { SiteFooter } from "@/components/layout/SiteFooter";
+import { buttonClasses } from "@/components/ui/Button";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col">
-      <header className="flex items-center justify-between px-6 py-5 sm:px-10">
-        <Image
-          src="/Logo-light.png"
-          alt="Chatfolio"
-          width={178}
-          height={89}
-          className="h-12 w-auto sm:h-14 dark:hidden"
-          priority
-        />
-        <Image
-          src="/Logo-dark.png"
-          alt="Chatfolio"
-          width={178}
-          height={89}
-          className="hidden h-12 w-auto sm:h-14 dark:block"
-          priority
-        />
-        <ThemeToggle />
-      </header>
+    <div className="flex min-h-dvh flex-col">
+      <IntroPrompt id="home" />
+      <RecruiterHeader />
 
-      <div className="flex flex-1 flex-col items-center gap-5 px-6 pt-6 pb-10 text-center sm:pt-10">
-        <div className="flex flex-col items-center gap-2.5">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-accent-soft px-3 py-1 text-xs font-medium text-accent-hover dark:text-accent">
-            <Sparkles className="h-3.5 w-3.5" />
-            Built for recruiters who move fast
-          </span>
-          <h1 className="max-w-xl text-2xl font-semibold text-text-primary sm:text-3xl">
-            Skip the resume — chat with a candidate&apos;s real story.
+      <main className="flex-1">
+        <section className="mx-auto max-w-[1080px] px-4 pt-11 pb-7 text-center sm:px-6">
+          <h1 className="font-display text-[clamp(32px,4.4vw,50px)] leading-[1.08] font-semibold tracking-[-0.01em] text-balance text-text-primary">
+            Skip the CV pile. <em className="text-accent">Ask the candidate.</em>
           </h1>
-          <p className="mx-auto max-w-lg text-sm leading-relaxed text-text-secondary">
-            Search by name, role, or location, then ask their AI about skills, projects,
-            availability, or how to reach them. Grounded answers, no waiting on a callback.
+          <p className="mx-auto mt-3.5 max-w-[600px] text-[17px] leading-relaxed text-pretty text-text-secondary">
+            Search, then chat with each candidate&apos;s AI. Answers come only from their approved profile.
           </p>
-        </div>
+        </section>
 
-        <ChatfolioSearch />
+        <CandidateSearch />
 
-        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-text-secondary">
-          <span className="inline-flex items-center gap-1.5">
-            <Zap className="h-3.5 w-3.5 text-accent" />
-            Answers in seconds, not a follow-up email
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <MessageCircle className="h-3.5 w-3.5 text-accent" />
-            Grounded in the candidate&apos;s real profile
-          </span>
-        </div>
-      </div>
+        <section className="mx-auto max-w-[1240px] px-4 pt-14 pb-10 sm:px-6">
+          <div className="flex flex-wrap items-center gap-6 rounded-3xl bg-hero px-9 py-8 text-hero-text">
+            <div className="min-w-[260px] flex-1">
+              <div className="font-display text-[26px] leading-tight font-semibold">Looking for work yourself?</div>
+              <p className="mt-1.5 text-[14.5px] text-hero-muted">
+                Upload your CV and get a chatfolio that answers recruiters like these, 24/7. Free.
+              </p>
+            </div>
+            <a href="https://panel.chatfolio.net/register" className={buttonClasses("primary", "px-[22px] py-3 text-[15px]")}>
+              Create my Chatfolio
+            </a>
+          </div>
+        </section>
+      </main>
 
-      <footer className="px-6 py-6 text-center text-xs text-text-secondary">
-        &copy; 2026 Chatfolio. All rights reserved.
-      </footer>
-
+      <SiteFooter />
       <FeedbackWidget />
-    </main>
+    </div>
   );
 }
