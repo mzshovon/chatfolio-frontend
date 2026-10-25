@@ -1,12 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { MapPin, Star } from "lucide-react";
 import { useRecruiter } from "@/components/recruiter/RecruiterProvider";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { cn } from "@/lib/utils/cn";
 import { formatGmtOffset } from "@/lib/utils/overlap";
+
+// Inlined at build time; full URL of the root domain (portal), e.g. https://chatfolio.chat
+const ROOT_URL = process.env.NEXT_PUBLIC_ROOT_URL || "/";
 
 export function RecruiterHeader() {
   const { ready, recruiter, viewer, shortlist, setShortlistOpen, openGate } = useRecruiter();
@@ -25,10 +27,10 @@ export function RecruiterHeader() {
   return (
     <header className="sticky top-0 z-30 border-b border-border-subtle bg-bg/95 backdrop-blur">
       <div className="mx-auto flex max-w-[1240px] flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2 sm:px-6">
-        <Link href="/" aria-label="Chatfolio home" className="flex shrink-0 items-center">
+        <a href={ROOT_URL} aria-label="Chatfolio home" className="flex shrink-0 items-center">
           <Image src="/Logo-light.png" alt="Chatfolio" width={178} height={89} className="h-10 w-auto dark:hidden" priority />
           <Image src="/Logo-dark.png" alt="Chatfolio" width={178} height={89} className="hidden h-10 w-auto dark:block" priority />
-        </Link>
+        </a>
         <span className="hidden border-l border-border pl-3.5 text-xs font-bold tracking-[0.12em] text-text-muted md:inline">
           FOR RECRUITERS
         </span>
