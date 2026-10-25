@@ -18,14 +18,48 @@ export interface ChatBanner {
   restartLabel?: string;
 }
 
+interface StoredChat {
+  sessionId: string | null;
+  messages: ChatMessage[];
+  /** Lifetime questions asked on this profile; survives restarts so the anonymous limit can't be reset. */
+  questionsAsked: number;
+}
+
+const storageKey = (slug: string) => `cf_chat:${slug}`;
+
+function loadStoredChat(slug: string): StoredChat | null {
+  try {
+    const raw = window.localStorage.getItem(storageKey(slug));
+    if (!raw) return null;
+    const v = JSON.parse(raw) as Partial<StoredChat>;
+    return {
+      sessionId: typeof v.sessionId === "string" ? v.sessionId : null,
+      messages: Array.isArray(v.messages) ? v.messages : [],
+      questionsAsked: typeof v.questionsAsked === "number" ? v.questionsAsked : 0,
+    };
+  } catch {
+    return null; // storage blocked or corrupt
+  }
+}
+
+function saveStoredChat(slug: string, chat: StoredChat) {
+  try {
+    window.localStorage.setItem(storageKey(slug), JSON.stringify(chat));
+  } catch {
+    // Non-fatal: the chat just won't survive a reload.
+  }
+}
+
 export type SessionStatus = "connecting" | "ready" | "error";
 
 /**
  * Owns the full lifecycle of the chat widget for one candidate slug: starting
  * a session, sending messages, and translating every documented error case
  * (§3 of PUBLIC_CHAT_UI_REFERENCE.md) into UI state. The session id lives only
- * in this hook's React state — never persisted — matching the doc's guidance
- * that a fresh visit should always start a fresh session.
+ * is persisted per slug (with its messages and a lifetime question count) in
+ * localStorage, so a reload resumes the same conversation and the anonymous
+ * question limit can't be reset by refreshing. A stored session the backend no
+ * longer knows (404) falls back to "start new chat".
  */
 export function useChatSession(slug: string) {
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -36,6 +70,9 @@ export function useChatSession(slug: string) {
   const [cooldownUntil, setCooldownUntil] = useState(0);
   const [now, setNow] = useState(() => Date.now());
   const [banner, setBanner] = useState<ChatBanner | null>(null);
+
+  const [questionsAsked, setQuestionsAsked] = useState(0);
+  const [hydrated, setHydrated] = useState(false);
 
   const cooldownActive = now < cooldownUntil;
 
@@ -74,13 +111,33 @@ export function useChatSession(slug: string) {
     }
   }, [slug]);
 
+  /* eslint-disable react-hooks/set-state-in-effect -- restoring persisted state on mount (localStorage is unavailable during SSR) */
   useEffect(() => {
+    const stored = loadStoredChat(slug);
+    if (stored) {
+      setQuestionsAsked(stored.questionsAsked);
+      if (stored.sessionId) {
+        setMessages(stored.messages);
+        setSessionId(stored.sessionId);
+        setSessionStatus("ready");
+        setHydrated(true);
+        return;
+      }
+    }
+    setHydrated(true);
     // `connect` only touches state after its internal `await`, i.e. in a
     // deferred microtask — not synchronously during this effect — so this
     // is the standard "start a session when the widget mounts" fetch effect.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     void connect();
-  }, [connect]);
+  }, [connect, slug]);
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  useEffect(() => {
+    // Wait for the restore above: saving the initial empty state first would
+    // overwrite the stored count/session before it is read back.
+    if (!hydrated) return;
+    saveStoredChat(slug, { sessionId, messages, questionsAsked });
+  }, [slug, hydrated, sessionId, messages, questionsAsked]);
 
   const restart = useCallback(() => {
     setMessages([]);
@@ -101,6 +158,7 @@ export function useChatSession(slug: string) {
         createdAt: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, userMessage]);
+      setQuestionsAsked((n) => n + 1);
       setDraft("");
       setBanner(null);
       setIsSending(true);
@@ -168,6 +226,7 @@ export function useChatSession(slug: string) {
     sessionId,
     sessionStatus,
     messages,
+    questionsAsked,
     draft,
     setDraft,
     isSending,

@@ -28,7 +28,7 @@ const SUGGESTIONS = [
 const SHEET_ANIMATION_MS = 340;
 const HIGHLIGHT_DURATION_MS = 1800;
 /** Questions an anonymous recruiter can ask before being asked to introduce themselves. */
-const ANON_QUESTION_LIMIT = 5;
+const ANON_QUESTION_LIMIT = 10;
 
 export function ChatWidget({ data }: { data: ChatfolioPage }) {
   const [profileOpen, setProfileOpen] = useState(false);
@@ -74,6 +74,7 @@ export function ChatWidget({ data }: { data: ChatfolioPage }) {
     sessionId,
     sessionStatus,
     messages,
+    questionsAsked,
     draft,
     setDraft,
     isSending,
@@ -87,7 +88,6 @@ export function ChatWidget({ data }: { data: ChatfolioPage }) {
 
   useIntroPrompt(`chat:${data.slug}`, firstName);
 
-  const questionsAsked = messages.filter((m) => m.role === "user").length;
   const anonQuestionsLeft = Math.max(0, ANON_QUESTION_LIMIT - questionsAsked);
   const ask = (text: string) => {
     if (!recruiter && questionsAsked >= ANON_QUESTION_LIMIT) {
