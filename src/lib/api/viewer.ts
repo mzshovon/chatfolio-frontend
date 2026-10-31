@@ -2,17 +2,11 @@ import { API_BASE_PATH } from "@/lib/env";
 import type { ViewerLocation } from "./types";
 
 export interface ResolvedViewer {
-  city: string;
-  country: string;
+  /** IANA name, e.g. "Asia/Dhaka". */
   timezone: string;
+  /** Label for the top bar, e.g. "Dhaka, Bangladesh (GMT+6)". */
+  display: string;
 }
-
-/** Used whenever the backend can't tell us where the recruiter is. */
-export const DEFAULT_VIEWER: ResolvedViewer = {
-  city: "Dhaka",
-  country: "Bangladesh",
-  timezone: "Asia/Dhaka",
-};
 
 function isValidTimezone(tz: string): boolean {
   try {
@@ -24,23 +18,20 @@ function isValidTimezone(tz: string): boolean {
 }
 
 /**
- * Where the recruiter is, as seen by the backend (from the request IP).
- * Proposed endpoint: GET /public/viewer/location. Until it exists — or if it
- * fails, or returns an unusable timezone — everything falls back to Dhaka, so
- * callers always get a complete value and never need to handle an error.
+ * Where the recruiter is, as seen by the backend (from the request IP):
+ * GET /public/viewer/location, which always answers 200 and nulls every field
+ * when it can't tell. Returns null in that case — and on any failure or
+ * unusable timezone — so callers hide the location instead of guessing.
  */
-export async function getViewerLocation(signal?: AbortSignal): Promise<ResolvedViewer> {
+export async function getViewerLocation(signal?: AbortSignal): Promise<ResolvedViewer | null> {
   try {
     const res = await fetch(`${API_BASE_PATH}/public/viewer/location`, { signal });
-    if (!res.ok) return DEFAULT_VIEWER;
+    if (!res.ok) return null;
     const data: ViewerLocation = await res.json();
-    if (!data.timezone || !isValidTimezone(data.timezone)) return DEFAULT_VIEWER;
-    return {
-      city: data.city?.trim() || data.timezone.split("/").pop()?.replace(/_/g, " ") || DEFAULT_VIEWER.city,
-      country: data.country?.trim() || "",
-      timezone: data.timezone,
-    };
+    if (!data.timezone || !isValidTimezone(data.timezone)) return null;
+    const display = data.display?.trim() || [data.city, data.country].filter(Boolean).join(", ");
+    return display ? { timezone: data.timezone, display } : null;
   } catch {
-    return DEFAULT_VIEWER;
+    return null;
   }
 }

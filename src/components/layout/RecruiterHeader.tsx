@@ -5,7 +5,6 @@ import { MapPin, Star } from "lucide-react";
 import { useRecruiter } from "@/components/recruiter/RecruiterProvider";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { cn } from "@/lib/utils/cn";
-import { formatGmtOffset } from "@/lib/utils/overlap";
 
 // Inlined at build time; full URL of the root domain (portal), e.g. https://chatfolio.chat
 const ROOT_URL = process.env.NEXT_PUBLIC_ROOT_URL || "/";
@@ -13,8 +12,6 @@ const ROOT_URL = process.env.NEXT_PUBLIC_ROOT_URL || "/";
 export function RecruiterHeader() {
   const { ready, recruiter, viewer, shortlist, setShortlistOpen, openGate } = useRecruiter();
 
-  const place = [viewer.city, viewer.country].filter(Boolean).join(", ");
-  const offset = formatGmtOffset(viewer.timezone);
   const recruiterInitials = recruiter
     ? recruiter.name
         .split(/\s+/)
@@ -36,13 +33,15 @@ export function RecruiterHeader() {
         </span>
 
         <div className="ml-auto flex flex-wrap items-center gap-2.5">
-          <div className="flex items-center gap-2 text-[13px] text-text-secondary" title={viewer.timezone}>
-            <span className="hidden lg:inline">You&apos;re in</span>
-            <span className="flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-[7px] font-semibold text-text-primary">
-              <MapPin className="h-3.5 w-3.5 text-accent" />
-              {place} {offset && <span className="font-medium text-text-muted">({offset})</span>}
-            </span>
-          </div>
+          {viewer && (
+            <div className="flex items-center gap-2 text-[13px] text-text-secondary" title={viewer.timezone}>
+              <span className="hidden lg:inline">You&apos;re in</span>
+              <span className="flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-[7px] font-semibold text-text-primary">
+                <MapPin className="h-3.5 w-3.5 text-accent" />
+                {viewer.display}
+              </span>
+            </div>
+          )}
 
           {ready && (
             <div className="flex items-center gap-2 rounded-full border border-border bg-surface py-1 pr-1.5 pl-1">

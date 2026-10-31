@@ -107,15 +107,15 @@ export function CandidateSearch() {
   const errored = !loading && Boolean(response?.errored);
 
   // The overlap toggle only makes sense once candidates carry working hours.
-  const canFilterOverlap = results.some((r) => r.work_hours);
+  const canFilterOverlap = Boolean(viewer) && results.some((r) => r.work_hours);
   const visible = useMemo(
     () =>
       results.filter(
         (r) =>
           matchesFilters(r, filterParams) &&
-          (!overlapOnly || !r.work_hours || (overlapHours(r.work_hours, viewer.timezone) ?? 0) >= MIN_OVERLAP_HOURS)
+          (!overlapOnly || !viewer || !r.work_hours || (overlapHours(r.work_hours, viewer.timezone) ?? 0) >= MIN_OVERLAP_HOURS)
       ),
-    [results, filterParams, overlapOnly, viewer.timezone]
+    [results, filterParams, overlapOnly, viewer]
   );
 
   const terms = useMemo(

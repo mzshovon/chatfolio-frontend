@@ -4,7 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { RecruiterGate } from "@/components/recruiter/RecruiterGate";
 import { ShortlistDrawer } from "@/components/recruiter/ShortlistDrawer";
 import { useHasMounted } from "@/hooks/useHasMounted";
-import { DEFAULT_VIEWER, getViewerLocation, type ResolvedViewer } from "@/lib/api/viewer";
+import { getViewerLocation, type ResolvedViewer } from "@/lib/api/viewer";
 import { useStoredJson } from "@/lib/storage/useStoredJson";
 
 export interface Recruiter {
@@ -33,7 +33,8 @@ export interface GateRequest {
 interface RecruiterContextValue {
   ready: boolean;
   recruiter: Recruiter | null;
-  viewer: ResolvedViewer;
+  /** Null until resolved, or when the backend can't tell where the recruiter is. */
+  viewer: ResolvedViewer | null;
   shortlist: ShortlistItem[];
   isShortlisted: (slug: string) => boolean;
   toggleShortlist: (item: ShortlistItem) => void;
@@ -85,7 +86,7 @@ export function RecruiterProvider({ children }: { children: ReactNode }) {
   const prompted = useRef(new Set<string>());
   const [gate, setGate] = useState<GateRequest | null>(null);
   const [shortlistOpen, setShortlistOpen] = useState(false);
-  const [viewer, setViewer] = useState<ResolvedViewer>(DEFAULT_VIEWER);
+  const [viewer, setViewer] = useState<ResolvedViewer | null>(null);
   const [toast, setToast] = useState("");
   const toastTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 

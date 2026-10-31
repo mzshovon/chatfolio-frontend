@@ -32,7 +32,7 @@ export function CandidateCard({ result, terms }: CandidateCardProps) {
   const { recruiter_count: count, years_experience: years, notice_period_days: notice } = result;
   const roleLine = [result.title, result.location].filter(Boolean).join(" · ");
   const { viewer } = useRecruiter();
-  const overlap = result.work_hours ? overlapHours(result.work_hours, viewer.timezone) : null;
+  const overlap = result.work_hours && viewer ? overlapHours(result.work_hours, viewer.timezone) : null;
 
   const facts = [
     years != null && { label: "Experience", value: `${years} yrs` },

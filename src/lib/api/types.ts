@@ -160,10 +160,15 @@ export interface ChatMessage {
   pending?: boolean;
 }
 
-/** Shape of the proposed GET /public/viewer/location response. Every field may be null. */
+/** Shape of the GET /public/viewer/location response. Always 200; every field is null when the location is unknown. */
 export interface ViewerLocation {
   city: string | null;
   country: string | null;
+  country_code: string | null;
   /** IANA name, e.g. "Asia/Dhaka". */
   timezone: string | null;
+  /** "GMT+6", "GMT+5:30" — computed for now, so it tracks DST. */
+  utc_offset: string | null;
+  /** Ready-made label, e.g. "Dhaka, Bangladesh (GMT+6)". */
+  display: string | null;
 }
