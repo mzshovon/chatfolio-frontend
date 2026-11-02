@@ -125,7 +125,15 @@ export interface SearchFilterGroup {
 
 export interface SearchFilterConfig {
   groups: SearchFilterGroup[];
-  popular_searches: string[];
+}
+
+/** One "Popular:" pill from GET /public/chatfolio/popular. */
+export interface PopularSearch {
+  label: string;
+  /** Already in the form the search endpoint's `q` param expects. */
+  q: string;
+  /** Exactly how many results `q` returns. */
+  count: number;
 }
 
 export interface StartSessionResponse {

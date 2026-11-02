@@ -3,6 +3,7 @@ import { ApiError, assertOk, parseErrorDetail } from "./client";
 import type {
   ChatfolioSearchResult,
   ChatMessageResponse,
+  PopularSearch,
   SearchFilterConfig,
   StartSessionResponse,
 } from "./types";
@@ -25,6 +26,8 @@ export function getCvDownloadUrl(slug: string): string {
 }
 
 export interface ChatfolioSearchParams {
+  /** Free text across name, title, bio, location, roles and skills; whitespace-separated terms are ANDed. */
+  q?: string;
   username?: string;
   field?: string;
   /** Query params contributed by the selected filter options (see SearchFilterOption.params). */
@@ -51,6 +54,7 @@ export async function searchChatfolios(
   signal?: AbortSignal
 ): Promise<ChatfolioSearchResult[]> {
   const query = new URLSearchParams();
+  if (params.q?.trim()) query.set("q", params.q.trim());
   if (params.username?.trim()) query.set("username", params.username.trim());
   if (params.field?.trim()) query.set("field", params.field.trim());
   for (const [key, value] of Object.entries(params.filters ?? {})) query.set(key, String(value));
@@ -59,6 +63,24 @@ export async function searchChatfolios(
   const res = await fetch(`${API_BASE_PATH}/public/chatfolio/search${qs ? `?${qs}` : ""}`, { signal });
   await assertOk(res);
   return res.json();
+}
+
+/**
+ * The "Popular:" pills (up to 5, most results first). Pass the viewer's city to
+ * localize them. Empty is normal — and so is any failure: the row is simply
+ * hidden rather than padded with pills that might lead to an empty page.
+ */
+export async function getPopularSearches(location?: string | null, signal?: AbortSignal): Promise<PopularSearch[]> {
+  const city = location?.trim();
+  const qs = city && city.length >= 2 && city.length <= 60 ? `?location=${encodeURIComponent(city)}` : "";
+  try {
+    const res = await fetch(`${API_BASE_PATH}/public/chatfolio/popular${qs}`, { signal });
+    if (!res.ok) return [];
+    const data: unknown = await res.json();
+    return Array.isArray(data) ? data.filter((p): p is PopularSearch => typeof p?.label === "string" && typeof p?.q === "string") : [];
+  } catch {
+    return [];
+  }
 }
 
 export async function startChatSession(slug: string): Promise<string> {

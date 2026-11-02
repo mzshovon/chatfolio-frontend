@@ -35,5 +35,4 @@ export const SEARCH_FILTERS: SearchFilterConfig = {
       ],
     },
   ],
-  popular_searches: ["React remote", "Backend Go", "Product designer", "Flutter", "Data analyst Dhaka"],
 };

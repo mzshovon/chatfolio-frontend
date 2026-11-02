@@ -35,6 +35,8 @@ interface RecruiterContextValue {
   recruiter: Recruiter | null;
   /** Null until resolved, or when the backend can't tell where the recruiter is. */
   viewer: ResolvedViewer | null;
+  /** True once the location lookup has settled, whether or not it found anything. */
+  viewerResolved: boolean;
   shortlist: ShortlistItem[];
   isShortlisted: (slug: string) => boolean;
   toggleShortlist: (item: ShortlistItem) => void;
@@ -87,12 +89,17 @@ export function RecruiterProvider({ children }: { children: ReactNode }) {
   const [gate, setGate] = useState<GateRequest | null>(null);
   const [shortlistOpen, setShortlistOpen] = useState(false);
   const [viewer, setViewer] = useState<ResolvedViewer | null>(null);
+  const [viewerResolved, setViewerResolved] = useState(false);
   const [toast, setToast] = useState("");
   const toastTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useEffect(() => {
     const controller = new AbortController();
-    getViewerLocation(controller.signal).then((v) => !controller.signal.aborted && setViewer(v));
+    getViewerLocation(controller.signal).then((v) => {
+      if (controller.signal.aborted) return;
+      setViewer(v);
+      setViewerResolved(true);
+    });
     return () => controller.abort();
   }, []);
 
@@ -144,6 +151,7 @@ export function RecruiterProvider({ children }: { children: ReactNode }) {
       ready,
       recruiter,
       viewer,
+      viewerResolved,
       shortlist,
       isShortlisted,
       toggleShortlist,
@@ -157,7 +165,7 @@ export function RecruiterProvider({ children }: { children: ReactNode }) {
       gate,
       flash,
     }),
-    [ready, recruiter, viewer, shortlist, isShortlisted, toggleShortlist, shortlistOpen, openGate, promptIntro, introduce, goAnonymous, closeGate, gate, flash]
+    [ready, recruiter, viewer, viewerResolved, shortlist, isShortlisted, toggleShortlist, shortlistOpen, openGate, promptIntro, introduce, goAnonymous, closeGate, gate, flash]
   );
 
   return (

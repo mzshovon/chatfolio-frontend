@@ -5,8 +5,8 @@ import { Clock, Loader2, Search, X } from "lucide-react";
 import { useRecruiter } from "@/components/recruiter/RecruiterProvider";
 import { CandidateCard } from "@/components/home/CandidateCard";
 import { buttonClasses } from "@/components/ui/Button";
-import { getSearchFilters, searchChatfolios } from "@/lib/api/publicChat";
-import type { ChatfolioSearchResult, SearchFilterConfig } from "@/lib/api/types";
+import { getPopularSearches, getSearchFilters, searchChatfolios } from "@/lib/api/publicChat";
+import type { ChatfolioSearchResult, PopularSearch, SearchFilterConfig } from "@/lib/api/types";
 import { SEARCH_FILTERS } from "@/lib/search/searchFilters";
 import { cn } from "@/lib/utils/cn";
 import { overlapHours } from "@/lib/utils/overlap";
@@ -16,27 +16,6 @@ const MIN_OVERLAP_HOURS = 2;
 const STOP_WORDS = new Set(["in", "and", "for", "a", "the", "developer", "with"]);
 
 type Selected = Record<string, string | null>;
-
-/**
- * `username` only matches the slug and `field` only matches title/bio/roles,
- * and the API ANDs params together. To let one search box cover both a name
- * and a role, run both lookups and merge by slug.
- */
-async function searchBoth(
-  query: string,
-  filters: Record<string, string | number>,
-  signal: AbortSignal
-): Promise<ChatfolioSearchResult[]> {
-  const q = query.trim();
-  if (!q) return searchChatfolios({ filters }, signal);
-
-  const [byName, byField] = await Promise.all([
-    searchChatfolios({ filters, username: q }, signal),
-    searchChatfolios({ filters, field: q }, signal),
-  ]);
-  const seen = new Set<string>();
-  return [...byName, ...byField].filter((r) => !seen.has(r.slug) && seen.add(r.slug));
-}
 
 /**
  * Re-applies the selected filters to rows that carry the matching field, so
@@ -55,7 +34,8 @@ function matchesFilters(r: ChatfolioSearchResult, p: Record<string, string | num
 }
 
 export function CandidateSearch() {
-  const { viewer } = useRecruiter();
+  const { viewer, viewerResolved } = useRecruiter();
+  const [popular, setPopular] = useState<PopularSearch[]>([]);
   const [config, setConfig] = useState<SearchFilterConfig>(SEARCH_FILTERS);
   const [draft, setDraft] = useState("");
   const [query, setQuery] = useState("");
@@ -77,6 +57,15 @@ export function CandidateSearch() {
     };
   }, []);
 
+  // Wait for the location lookup so the pills are fetched once, localized when we know the city.
+  const city = viewer?.city;
+  useEffect(() => {
+    if (!viewerResolved) return;
+    const controller = new AbortController();
+    getPopularSearches(city, controller.signal).then((p) => !controller.signal.aborted && setPopular(p));
+    return () => controller.abort();
+  }, [viewerResolved, city]);
+
   // Merge each selected option's params into one query-param object.
   const filterParams = useMemo(() => {
     const merged: Record<string, string | number> = {};
@@ -96,7 +85,7 @@ export function CandidateSearch() {
   const requestKey = `${query}|${filterKey}`;
   useEffect(() => {
     const controller = new AbortController();
-    searchBoth(query, JSON.parse(filterKey), controller.signal)
+    searchChatfolios({ q: query, filters: JSON.parse(filterKey) }, controller.signal)
       .then((results) => !controller.signal.aborted && setResponse({ key: requestKey, results, errored: false }))
       .catch(() => !controller.signal.aborted && setResponse({ key: requestKey, results: [], errored: true }));
     return () => controller.abort();
@@ -171,17 +160,18 @@ export function CandidateSearch() {
         </button>
       </form>
 
-      {config.popular_searches.length > 0 && (
+      {popular.length > 0 && (
         <div className="mx-auto mt-3.5 flex max-w-[820px] flex-wrap items-center justify-center gap-2">
           <span className="text-[12.5px] text-text-muted">Popular:</span>
-          {config.popular_searches.map((p) => (
+          {popular.map((p) => (
             <button
-              key={p}
+              key={p.q}
               type="button"
-              onClick={() => pick(p)}
+              title={`${p.count} ${p.count === 1 ? "candidate" : "candidates"}`}
+              onClick={() => pick(p.q)}
               className="rounded-full border border-border px-3 py-1.5 text-[13px] font-medium text-text-secondary transition-colors hover:border-accent hover:text-accent"
             >
-              {p}
+              {p.label}
             </button>
           ))}
         </div>

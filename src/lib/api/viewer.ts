@@ -2,6 +2,7 @@ import { API_BASE_PATH } from "@/lib/env";
 import type { ViewerLocation } from "./types";
 
 export interface ResolvedViewer {
+  city: string | null;
   /** IANA name, e.g. "Asia/Dhaka". */
   timezone: string;
   /** Label for the top bar, e.g. "Dhaka, Bangladesh (GMT+6)". */
@@ -30,7 +31,7 @@ export async function getViewerLocation(signal?: AbortSignal): Promise<ResolvedV
     const data: ViewerLocation = await res.json();
     if (!data.timezone || !isValidTimezone(data.timezone)) return null;
     const display = data.display?.trim() || [data.city, data.country].filter(Boolean).join(", ");
-    return display ? { timezone: data.timezone, display } : null;
+    return display ? { city: data.city?.trim() || null, timezone: data.timezone, display } : null;
   } catch {
     return null;
   }
